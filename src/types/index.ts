@@ -57,7 +57,7 @@ export interface QuizAnswers {
   gender: 'male' | 'female' | 'unisex' | null;
   favoriteNotes: string[];
   avoidedNotes: string[];
-  season: 'spring' | 'summer' | 'fall' | 'winter' | 'transitional' | 'all' | null;
+  season: 'spring' | 'summer' | 'fall' | 'winter' | 'all' | null;
   intensity: 'light' | 'moderate' | 'strong' | null;
 }
 
@@ -88,9 +88,15 @@ export interface RecommendationResult {
   perfume: Perfume;
   matchScore: number;
   matchReasons: string[];
+  matchReason: string;  // Human-readable "why this matched" explanation
 }
+
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
 export interface RecommendationOutput {
   results: RecommendationResult[];
   usedFallback: boolean;
+  confidenceLevel: ConfidenceLevel;
+  safetyNetTriggered: boolean;
+  browsableCollection: RecommendationResult[];
 }

@@ -10,10 +10,11 @@ interface PerfumeCardProps {
     perfume: Perfume;
     matchScore: number;
     matchReasons: string[];
+    matchReason: string;
     rank: number;
 }
 
-export default function PerfumeCard({ perfume, matchScore, matchReasons, rank }: PerfumeCardProps) {
+export default function PerfumeCard({ perfume, matchScore, matchReasons, matchReason, rank }: PerfumeCardProps) {
     const { t } = useI18n();
 
     const getBadge = () => {
@@ -88,6 +89,11 @@ export default function PerfumeCard({ perfume, matchScore, matchReasons, rank }:
 
                 {/* Name */}
                 <h3 className="text-base font-medium text-[#1a1a1a]">{perfume.name}</h3>
+
+                {/* Match Reason Subtitle */}
+                {matchReason && (
+                    <p className="text-xs text-[#6A1B9A] mt-1">{matchReason}</p>
+                )}
 
                 {/* Price */}
                 <p className="text-sm text-[#4a4a4a] mt-1">

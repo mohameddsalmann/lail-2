@@ -8,19 +8,21 @@
 
 export const RECOMMENDATION_CONFIG = {
   // --- Minimum Match Gate ---
-  // Dynamic threshold: Math.max(2, Math.ceil(perfume.mainNotes.length * ratio))
+  // Dynamic threshold: Math.max(1, Math.ceil(perfume.mainNotes.length * ratio))
   // Default ratio = 0.6, fallback ratio = 0.4
   MIN_MATCH_RATIO: 0.6,
   MIN_MATCH_RATIO_FALLBACK: 0.4,
 
   // --- Scoring Weights (must sum to 100) ---
   SCORE_WEIGHTS: {
-    notePosition: 50,   // Note match + tier/position weighting
-    season: 15,         // Season suitability
-    intensity: 15,      // Intensity/longevity match
-    genderMatch: 10,    // Gender exact match
-    inspiredBonus: 5,   // Inspired-by luxury brand bonus
-    richProfile: 5,     // Rich note profile (≥6 notes)
+    notePosition: 35,     // Note match + tier/position weighting
+    categoryAffinity: 15, // Note family/category overlap
+    season: 15,           // Season suitability
+    intensity: 10,        // Intensity/longevity match
+    genderMatch: 10,      // Gender exact match
+    inspiredBonus: 5,     // Inspired-by luxury brand bonus
+    richProfile: 5,       // Rich note profile (≥6 notes)
+    crowdFavorite: 5,     // Bestseller / crowd favorite bonus
   } as const,
 
   // --- Tier Weights ---
@@ -35,6 +37,30 @@ export const RECOMMENDATION_CONFIG = {
   MIN_TOTAL_SCORE: 20,        // Minimum score to appear in results
   MAX_RESULTS: 6,             // How many perfumes to return
   RICH_PROFILE_THRESHOLD: 6,  // Min total notes for rich profile bonus
+  MIN_GUARANTEED_RESULTS: 3,  // Always return at least this many recommendations
+
+  // --- Confidence Tiers ---
+  CONFIDENCE_HIGH_THRESHOLD: 45,    // Score ≥ 45 → "high" confidence
+  CONFIDENCE_MEDIUM_THRESHOLD: 25,  // Score ≥ 25 → "medium" confidence
+
+  // --- Bestseller IDs ---
+  // Add product IDs here when sales data is available.
+  // If empty, all perfumes get a neutral score (2 pts).
+  BESTSELLER_IDS: [] as string[],
+
+  // --- Season Inference from Note Categories ---
+  // Used when user doesn't specify a season preference.
+  SEASON_INFERENCE: {
+    FRESH_CITRUS: { 'summer-spring': 0.8, 'all': 0.5 },
+    TROPICAL: { 'summer-spring': 0.9, 'all': 0.3 },
+    SWEET_GOURMAND: { 'fall-winter': 0.7, 'all': 0.6 },
+    GREEN: { 'summer-spring': 0.7, 'all': 0.5 },
+    WARM_SPICY: { 'fall-winter': 0.8, 'all': 0.5 },
+    MUSKY_AMBER: { 'fall-winter': 0.7, 'all': 0.6 },
+    FLORAL: { 'summer-spring': 0.6, 'all': 0.6 },
+    AQUATIC: { 'summer-spring': 0.9, 'all': 0.2 },
+    FRUITY: { 'summer-spring': 0.7, 'all': 0.5 },
+  } as Record<string, Record<string, number>>,
 
   // --- Synonym Map ---
   // Maps alternate spellings/names to a canonical form for fuzzy matching.
@@ -44,13 +70,16 @@ export const RECOMMENDATION_CONFIG = {
   SYNONYM_MAP: {
     // Alternate spellings / typos in perfume data
     'marine notes': 'water notes',
-    'ba7r': 'water notes',
+    'ba7r': 'marine notes',
     'watery notes': 'water notes',
-    'sea notes': 'water notes',
+    'sea notes': 'marine notes',
     'aquatic notes': 'water notes',
+    'ocean': 'marine notes',
     'pinapple': 'pineapple',
     'woods': 'wood notes',
     'woods notes': 'wood notes',
+    'woodsy': 'wood notes',
+    'woody': 'wood notes',
     'oud wood': 'oud',
     'oud agarwood': 'oud',
     'tonka': 'tonka beans',
@@ -60,28 +89,31 @@ export const RECOMMENDATION_CONFIG = {
     'cocoa': 'cacao',
     'cocoa butter': 'cacao',
     'bourbon vanilla': 'vanilla',
+    'vanille': 'vanilla',
     'madagascar vanilla': 'vanilla',
     'vanilla absolute': 'vanilla',
     'vanilla caviar': 'vanilla',
-    'turkish rose': 'rose',
+    'rose': 'turkish rose',
     'natural oud agarwood': 'oud',
     'strawberries': 'strawberry',
     'bergamot orange': 'bergamot',
     'pineapple coconut': 'pineapple',
-    'white rum': 'rum',
-    'brandy': 'rum',
+    'rum': 'white rum',
+    'brandy': 'white rum',
     'juniper berries': 'juniper',
     'chinese tea': 'tea',
     'black tea': 'tea',
-    'beach': 'marine notes',
+    'beach': 'beach notes',
     'tropical fruits': 'tropical fruits',
-    'green apple': 'apple',
-    'red apple': 'apple',
-    'frozen apple': 'apple',
+    'tropical': 'tropical fruits',
+    'apple': 'green apple',
+    'red apple': 'green apple',
+    'frozen apple': 'green apple',
     'peppermint': 'mint',
+    'spearmint': 'mint',
     'black currant': 'blackcurrant',
     'black currant leaf': 'blackcurrant',
-    'litchi': 'lychee',
+    'lychee': 'litchi',
     'whipped cream': 'cream',
     'creamy milk': 'milk',
     'cotton candy': 'sugar',
@@ -92,8 +124,9 @@ export const RECOMMENDATION_CONFIG = {
     'maple': 'caramel',
     'peru balsam': 'balsam',
     'tolu balsam': 'balsam',
-    'ambergris': 'ambroxan',
-    'iso e super': 'ambroxan',
+    'ambergris': 'amber',
+    'ambroxan': 'amber',
+    'iso e super': 'amber',
     'cashmeran': 'musk',
     'white musk': 'musk',
     'skin musk': 'musk',
@@ -132,22 +165,22 @@ export const RECOMMENDATION_CONFIG = {
     'chili': 'spices',
     'wasabi': 'spices',
     'star anise': 'spices',
-    'peony': 'rose',
+    'peony': 'turkish rose',
     'magnolia': 'white flowers',
     'gardenia': 'white flowers',
     'tuberose': 'white flowers',
     'lily of the valley': 'white flowers',
     'freesia': 'white flowers',
     'frangipani': 'white flowers',
-    'cherry blossom': 'rose',
-    'hibiscus': 'rose',
+    'cherry blossom': 'turkish rose',
+    'hibiscus': 'turkish rose',
     'osmanthus': 'apricot',
     'neroli': 'orange blossom',
     'ylang': 'jasmine',
     'honeysuckle': 'jasmine',
     'carnation': 'spices',
     'iris': 'violet',
-    'ozone': 'ambroxan',
+    'ozone': 'amber',
     'green tea': 'tea',
     'elemi': 'incense',
     'almond': 'almond',
@@ -180,10 +213,10 @@ export const RECOMMENDATION_CONFIG = {
     'fresh ginger': 'ginger',
     'bakhoor': 'incense',
     'agarwood': 'oud',
-    'damask rose': 'rose',
-    'taif rose': 'rose',
+    'damask rose': 'turkish rose',
+    'taif rose': 'turkish rose',
     'suede': 'leather',
-    'whisky absolute': 'whiskey',
+    'whisky absolute': 'cognac',
     'birch': 'wood notes',
     'sage': 'herbal',
     'clary sage': 'herbal',
@@ -203,12 +236,32 @@ export const RECOMMENDATION_CONFIG = {
     'bitter almond': 'almond',
     'nuts': 'almond',
     'coconut': 'coconut',
+    'cocunut': 'coconut',
+    'cocoanut': 'coconut',
+    'coco nut': 'coconut',
     'caramel': 'caramel',
+    'carmel': 'caramel',
+    'vanila': 'vanilla',
+    'vaniilla': 'vanilla',
+    'vanila caviar': 'vanilla caviar',
+    'bergamont': 'bergamot',
+    'sandelwood': 'sandalwood',
+    'sandal': 'sandalwood',
+    'patchouly': 'patchouli',
+    'pachouli': 'patchouli',
+    'musks': 'musk',
+    'amber wood': 'amber',
+    'rose wood': 'wood notes',
+    'lavendar': 'lavender',
+    'jasmin': 'jasmine',
+    'ylang ylang': 'ylang',
+    'citris': 'citrus',
+    'beregmont': 'bergamot',
     'marshmallow': 'marshmallow',
     'coffee': 'coffee',
     'honey': 'honey',
     'sugar': 'sugar',
-    'rum': 'rum',
+    'white rum': 'white rum',
     'cognac': 'cognac',
     'milk': 'milk',
     'ginger': 'ginger',
@@ -219,13 +272,13 @@ export const RECOMMENDATION_CONFIG = {
     'black pepper': 'pepper',
     'bergamot': 'bergamot',
     'lemon': 'lemon',
-    'lime': 'lime',
+    'lime': 'citron',
     'grapefruit': 'grapefruit',
     'mandarin': 'mandarin',
     'orange': 'orange',
     'tangerine': 'mandarin',
     'citron': 'citron',
-    'apple': 'apple',
+    'green apple': 'green apple',
     'pear': 'pear',
     'peach': 'peach',
     'apricot': 'apricot',
@@ -238,10 +291,10 @@ export const RECOMMENDATION_CONFIG = {
     'passionfruit': 'passionfruit',
     'mango': 'mango',
     'pineapple': 'pineapple',
-    'lychee': 'lychee',
+    'litchi': 'litchi',
     'fig': 'fig',
     'vanilla': 'vanilla',
-    'rose': 'rose',
+    'turkish rose': 'turkish rose',
     'jasmine': 'jasmine',
     'lavender': 'lavender',
     'geranium': 'geranium',
@@ -251,6 +304,7 @@ export const RECOMMENDATION_CONFIG = {
     'oud': 'oud',
     'sandalwood': 'sandalwood',
     'cedar': 'cedar',
+    'cedarwood': 'cedar',
     'patchouli': 'patchouli',
     'vetiver': 'vetiver',
     'amber': 'amber',
@@ -272,6 +326,9 @@ export const RECOMMENDATION_CONFIG = {
     'benzoin': 'benzoin',
     'labdanum': 'labdanum',
     'pepper': 'pepper',
+    'beach notes': 'beach notes',
+    'mixed berries': 'berries',
+    'berries': 'berries',
   } as Record<string, string>,
 
   // --- Fuzzy Matching ---

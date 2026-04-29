@@ -29,12 +29,15 @@ export default function QuizContainer() {
         isComplete,
         isLoading,
         recommendations,
+        browsableCollection,
         usedFallback,
+        confidenceLevel,
+        safetyNetTriggered,
         canProceed,
     } = useQuiz();
 
     if (isComplete && recommendations) {
-        return <QuizResults recommendations={recommendations} onRetake={resetQuiz} usedFallback={usedFallback} />;
+        return <QuizResults recommendations={recommendations} browsableCollection={browsableCollection} answers={answers} onRetake={resetQuiz} usedFallback={usedFallback} confidenceLevel={confidenceLevel} safetyNetTriggered={safetyNetTriggered} />;
     }
 
     if (isLoading) {

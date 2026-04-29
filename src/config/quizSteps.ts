@@ -163,13 +163,6 @@ export const quizSteps: QuizStep[] = [
             { id: 'summer', label: 'Summer', labelAr: 'الصيف', icon: 'summer', description: 'Citrus & aquatic' },
             { id: 'fall', label: 'Fall', labelAr: 'الخريف', icon: 'fall', description: 'Warm & spicy' },
             { id: 'winter', label: 'Winter', labelAr: 'الشتاء', icon: 'winter', description: 'Rich & cozy' },
-            {
-                id: 'transitional',
-                label: 'Shoulder seasons',
-                labelAr: 'فصول انتقالية',
-                icon: 'transitional',
-                description: 'Mild & changeable air',
-            },
             { id: 'all', label: 'All Year', labelAr: 'طوال السنة', icon: 'calendar', description: 'Versatile' },
         ]
     },
@@ -182,9 +175,9 @@ export const quizSteps: QuizStep[] = [
         required: true,
         skippable: false,
         options: [
-            { id: 'light', label: 'Moderate', labelAr: 'معتدل', icon: 'light', description: 'Close to skin' },
-            { id: 'moderate', label: 'Strong', labelAr: 'قوي', icon: 'moderate', description: 'Balanced' },
-            { id: 'strong', label: 'Enormous', labelAr: 'هائل', icon: 'strong', description: 'Statement maker' }
+            { id: 'light', label: 'Moderate', labelAr: 'معتدل', icon: 'light', description: 'Soft landing' },
+            { id: 'moderate', label: 'Strong', labelAr: 'قوي', icon: 'moderate', description: 'Noticeable' },
+            { id: 'strong', label: 'Enormous', labelAr: 'هائل', icon: 'strong', description: 'Fills the room' }
         ]
     }
 ];

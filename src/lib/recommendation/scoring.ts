@@ -5,9 +5,10 @@
  * Each function returns a score from 0 to its max points, plus match reasons.
  */
 
-import { Perfume, QuizAnswers } from '@/types';
+import { Perfume, QuizAnswers, RecommendationResult } from '@/types';
 import { RECOMMENDATION_CONFIG } from './config';
 import { fuzzyMatch } from './fuzzyMatch';
+import { getUserCategories, getPerfumeCategories, setIntersection, CATEGORY_DISPLAY_NAMES, NoteCategory } from './noteCategories';
 
 // --- Note Position-Weighted Scoring ---
 
@@ -75,34 +76,23 @@ function computeUserWeight(userPickIndex: number): number {
 }
 
 /**
- * Compute the maximum possible score for a given number of user picks
- * and perfume note locations.
+ * Compute the maximum possible score for a given number of matched notes.
  *
- * The theoretical best case: every user pick matches the perfume note
- * at the highest-weighted position (1st top note = weight 1.0).
+ * Uses the actual matched count as the ceiling instead of the total user pick count.
+ * This prevents the theoretical max from being unreachable — e.g., when a user
+ * picks 5 notes and 4 match, the max should be based on 4 matches, not 5.
  *
- * maxPossible = SUM of (userWeight_i × bestPerfumeWeight_i)
- * where we assign the best available perfume weights to the most important user picks.
- *
- * Since both user and perfume weights decrease harmonically, the best
- * pairing is: user[0] × perfume[0], user[1] × perfume[1], etc.
- * where perfume[i] is the i-th highest perfume note weight.
+ * maxPossible = SUM of (userWeight_i × perfumeWeight_i) for i in [0, matchedCount)
+ * This means: "if every matched note had been at position i vs position i, score is 100%"
  */
 function computeMaxPossibleScore(
-  userPickCount: number,
-  noteLocations: NoteLocation[]
+  matchedCount: number
 ): number {
-  // Sort perfume note weights descending (best first)
-  const perfumeWeights = noteLocations
-    .map(loc => computePerfumeNoteWeight(loc))
-    .sort((a, b) => b - a);
-
-  const matchCount = Math.min(userPickCount, perfumeWeights.length);
   let maxScore = 0;
 
-  for (let i = 0; i < matchCount; i++) {
-    const userW = computeUserWeight(i);       // user's i-th pick weight
-    const perfumeW = perfumeWeights[i];       // i-th best perfume weight
+  for (let i = 0; i < matchedCount; i++) {
+    const userW = computeUserWeight(i);
+    const perfumeW = computePerfumeNoteWeight({ tier: 'top', indexInTier: i, noteName: '' });
     maxScore += userW * perfumeW;
   }
 
@@ -125,17 +115,18 @@ export function scoreNoteMatch(
   answers: QuizAnswers,
   perfume: Perfume,
   maxPoints: number
-): { score: number; reasons: string[] } {
+): { score: number; reasons: string[]; matchedNotes: string[]; sharedCategories: NoteCategory[] } {
   const favoriteNotes = answers.favoriteNotes || [];
 
   // If no favorite notes selected, give a neutral base score
   if (favoriteNotes.length === 0 || favoriteNotes.includes('none')) {
-    return { score: maxPoints * 0.4, reasons: [] };
+    return { score: maxPoints * 0.4, reasons: [], matchedNotes: [], sharedCategories: [] };
   }
 
   const noteLocations = buildNoteLocations(perfume);
   const reasons: string[] = [];
   const matchedNotes: string[] = [];
+  const sharedCategories: NoteCategory[] = [];
 
   // Track which perfume note locations have already been matched
   // (to avoid double-matching the same perfume note to multiple user picks)
@@ -169,16 +160,35 @@ export function scoreNoteMatch(
       const noteScore = userWeight * bestPerfWeight;
       rawScore += noteScore;
       matchedNotes.push(noteLocations[bestPerfIdx].noteName);
+    } else {
+      // No direct match — check if this user note shares a category with any perfume note
+      const userCat = getUserCategories([userNote]);
+      const perfumeAllNotes = perfume.mainNotes.length > 0
+        ? perfume.mainNotes
+        : [...perfume.notes.top, ...perfume.notes.middle, ...perfume.notes.base];
+      const perfCats = getPerfumeCategories(perfumeAllNotes);
+      const overlap = setIntersection(userCat, perfCats);
+      for (const cat of overlap) {
+        if (!sharedCategories.includes(cat)) sharedCategories.push(cat);
+      }
     }
   }
 
-  // Compute max possible score for normalization
-  const maxPossible = computeMaxPossibleScore(favoriteNotes.length, noteLocations);
+  // Compute max possible score for normalization (based on actual matches, not theoretical)
+  const maxPossible = computeMaxPossibleScore(matchedNotes.length);
 
   // Normalize to maxPoints scale
-  const normalizedScore = maxPossible > 0
+  let normalizedScore = maxPossible > 0
     ? (rawScore / maxPossible) * maxPoints
     : 0;
+
+  // Match ratio bonus: when ≥60% of user notes match, boost the note score
+  // This ensures high-match perfumes score ≥90% overall
+  const matchRatio = matchedNotes.length / favoriteNotes.length;
+  if (matchRatio >= 0.6 && normalizedScore > 0) {
+    const boost = 1 + (matchRatio - 0.6); // up to +40% at 100% match
+    normalizedScore = Math.min(maxPoints * 1.4, normalizedScore * boost);
+  }
 
   // Build reasons from matched notes
   if (matchedNotes.length > 0) {
@@ -186,7 +196,48 @@ export function scoreNoteMatch(
     reasons.push(`Contains ${displayNotes}`);
   }
 
-  return { score: normalizedScore, reasons };
+  return { score: normalizedScore, reasons, matchedNotes, sharedCategories };
+}
+
+// --- Category Affinity Scoring ---
+
+/**
+ * Score the overlap between user's note categories and perfume's note categories.
+ * Formula: (sharedCategories / userCategories) * maxPoints
+ * Neutral fallback (no user categories): maxPoints * 0.3
+ */
+export function scoreCategoryAffinity(
+  answers: QuizAnswers,
+  perfume: Perfume,
+  maxPoints: number
+): { score: number; reasons: string[]; sharedCategories: NoteCategory[] } {
+  const favoriteNotes = answers.favoriteNotes || [];
+  if (favoriteNotes.length === 0 || favoriteNotes.includes('none')) {
+    return { score: maxPoints * 0.3, reasons: [], sharedCategories: [] };
+  }
+
+  const userCats = getUserCategories(favoriteNotes);
+  if (userCats.size === 0) {
+    return { score: maxPoints * 0.3, reasons: [], sharedCategories: [] };
+  }
+
+  const perfumeAllNotes = perfume.mainNotes.length > 0
+    ? perfume.mainNotes
+    : [...perfume.notes.top, ...perfume.notes.middle, ...perfume.notes.base];
+  const perfumeCats = getPerfumeCategories(perfumeAllNotes);
+
+  const shared = setIntersection(userCats, perfumeCats);
+  const overlapRatio = shared.size / userCats.size;
+  const score = Math.round(overlapRatio * maxPoints);
+
+  const reasons: string[] = [];
+  const sharedArr = Array.from(shared);
+  if (sharedArr.length > 0) {
+    const catNames = sharedArr.slice(0, 2).map(c => CATEGORY_DISPLAY_NAMES[c] || c).join(' & ');
+    reasons.push(`In the ${catNames} family`);
+  }
+
+  return { score, reasons, sharedCategories: sharedArr };
 }
 
 // --- Season Scoring ---
@@ -248,29 +299,6 @@ export function scoreSeason(
     return { score: maxPoints * 0.75, reasons };
   }
 
-  if (answers.season === 'transitional') {
-    // Mild shoulder-season preference: reward spring/fall overlaps; otherwise blend cues
-    if (perfume.seasons && perfume.seasons.length > 0) {
-      const ps = perfume.seasons.map(s => s.toLowerCase().trim());
-      if (ps.includes('all')) {
-        return { score: maxPoints * 0.8, reasons };
-      }
-      const shoulder = ps.some((s) => ['spring', 'fall', 'autumn'].includes(s));
-      if (shoulder) {
-        reasons.push('Suited to mild, in-between weather');
-        return { score: maxPoints * 0.94, reasons };
-      }
-      return { score: maxPoints * 0.32, reasons };
-    }
-    const sSpring = inferSeasonScore(perfume, 'spring');
-    const sFall = inferSeasonScore(perfume, 'fall');
-    const blended = (sSpring + sFall) / 2;
-    const scaledScore = (blended / 10) * maxPoints;
-    if (blended >= 7) {
-      reasons.push('Suited to mild, in-between weather');
-    }
-    return { score: scaledScore, reasons };
-  }
 
   // Use perfume's explicit seasons field if available
   if (perfume.seasons && perfume.seasons.length > 0) {
@@ -343,25 +371,30 @@ export function scoreIntensity(
   answers: QuizAnswers,
   perfume: Perfume,
   maxPoints: number
-): { score: number; reasons: string[] } {
+): { score: number; reasons: string[]; intensityDiff: number } {
   const reasons: string[] = [];
 
-  // Map perfume longevity to intensity levels
-  // moderate → moderate, strong → strong, enormous → strong
-  const longevityToIntensity: Record<string, string> = {
-    'moderate': 'moderate',
-    'strong': 'strong',
-    'enormous': 'strong',
+  // Map perfume longevity to intensity levels on 4-point scale
+  // [light=0, moderate=1, strong=2, enormous=3]
+  const longevityToIntensity: Record<string, number> = {
+    'moderate': 1,
+    'strong': 2,
+    'enormous': 3,
   };
 
-  const perfumeIntensity = perfume.longevity
-    ? longevityToIntensity[perfume.longevity] || inferIntensity(perfume)
-    : inferIntensity(perfume);
-  const preferredIntensity = answers.intensity || 'moderate';
+  let perfumeIdx: number;
+  if (perfume.longevity && longevityToIntensity[perfume.longevity] !== undefined) {
+    perfumeIdx = longevityToIntensity[perfume.longevity];
+  } else {
+    const inferred = inferIntensity(perfume);
+    const inferredMap: Record<string, number> = { light: 0, moderate: 1, strong: 2 };
+    perfumeIdx = inferredMap[inferred] ?? 1;
+  }
 
-  const intensityOrder = ['light', 'moderate', 'strong'] as const;
-  const perfumeIdx = intensityOrder.indexOf(perfumeIntensity as any);
-  const preferredIdx = intensityOrder.indexOf(preferredIntensity);
+  const preferredIntensity = answers.intensity || 'moderate';
+  const preferredMap: Record<string, number> = { light: 0, moderate: 1, strong: 2, enormous: 3 };
+  const preferredIdx = preferredMap[preferredIntensity] ?? 1;
+
   const diff = Math.abs(perfumeIdx - preferredIdx);
 
   let score: number;
@@ -370,11 +403,13 @@ export function scoreIntensity(
     reasons.push('Matches your intensity preference');
   } else if (diff === 1) {
     score = maxPoints * 0.6;
-  } else {
+  } else if (diff === 2) {
     score = maxPoints * 0.2;
+  } else {
+    score = maxPoints * 0.1;
   }
 
-  return { score, reasons };
+  return { score, reasons, intensityDiff: diff };
 }
 
 // --- Gender Scoring ---
@@ -433,4 +468,87 @@ export function scoreRichProfile(
     return { score: maxPoints, reasons: [] };
   }
   return { score: 0, reasons: [] };
+}
+
+// --- Crowd Favorite Bonus ---
+
+/**
+ * Bonus for bestseller / crowd favorite perfumes.
+ * If no bestseller data exists yet, gives all perfumes a neutral 2 pts.
+ */
+export function scoreCrowdFavorite(
+  perfume: Perfume,
+  maxPoints: number
+): { score: number; reasons: string[] } {
+  const bestsellerIds = RECOMMENDATION_CONFIG.BESTSELLER_IDS;
+
+  if (bestsellerIds.length === 0) {
+    // Neutral until data exists — don't waste the weight
+    return { score: 2, reasons: [] };
+  }
+
+  if (bestsellerIds.includes(perfume.id)) {
+    return { score: maxPoints, reasons: ['Customer favorite'] };
+  }
+
+  return { score: 0, reasons: [] };
+}
+
+// --- Match Reason Generation ---
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/**
+ * Generate a human-readable "why this matched" explanation string.
+ * Combines matched notes, category affinity, season, and intensity into
+ * a concise reason displayed below the perfume name.
+ */
+export function generateMatchReason(
+  answers: QuizAnswers,
+  perfume: Perfume,
+  matchDetails: {
+    matchedNotes: string[];
+    sharedCategories: NoteCategory[];
+    seasonMatch: 'direct' | 'allSeasons' | 'inferred' | 'none';
+    intensityDiff: number;
+  }
+): string {
+  const reasons: string[] = [];
+
+  // Matched notes
+  const matchedNotes = matchDetails.matchedNotes || [];
+  if (matchedNotes.length > 0) {
+    const noteList = matchedNotes.slice(0, 3).join(' & ');
+    reasons.push(`Matches your love of ${noteList}`);
+  }
+
+  // Category match (no direct note match but same family)
+  const sharedCats = matchDetails.sharedCategories || [];
+  if (matchedNotes.length === 0 && sharedCats.length > 0) {
+    const familyList = sharedCats.slice(0, 2).map(c => CATEGORY_DISPLAY_NAMES[c] || c).join(' and ');
+    reasons.push(`In the ${familyList} family you enjoy`);
+  }
+
+  // Season
+  if (matchDetails.seasonMatch === 'direct') {
+    const seasonNames: Record<string, string> = {
+      spring: 'Spring', summer: 'Summer', fall: 'Fall', winter: 'Winter'
+    };
+    reasons.push(`Perfect for ${seasonNames[answers.season || ''] || answers.season}`);
+  } else if (matchDetails.seasonMatch === 'allSeasons') {
+    reasons.push('Versatile for any season');
+  }
+
+  // Intensity
+  if (matchDetails.intensityDiff === 0 && perfume.longevity) {
+    reasons.push(`${capitalize(perfume.longevity)} projection, just how you like it`);
+  }
+
+  if (reasons.length === 0) {
+    return 'A great fragrance worth exploring';
+  }
+
+  return reasons.slice(0, 2).join(' · ');
 }

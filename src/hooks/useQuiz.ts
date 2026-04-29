@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { QuizAnswers, RecommendationResult, RecommendationOutput } from '@/types';
+import { QuizAnswers, RecommendationResult, RecommendationOutput, ConfidenceLevel } from '@/types';
 import { quizSteps } from '@/config/quizSteps';
 import { perfumes } from '@/data/perfumes';
 import { recommendPerfumes } from '@/lib/recommendation/recommend';
@@ -33,7 +33,10 @@ export function useQuiz() {
     const [isComplete, setIsComplete] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [recommendations, setRecommendations] = useState<RecommendationResult[] | null>(null);
+    const [browsableCollection, setBrowsableCollection] = useState<RecommendationResult[]>([]);
     const [usedFallback, setUsedFallback] = useState(false);
+    const [confidenceLevel, setConfidenceLevel] = useState<ConfidenceLevel>('high');
+    const [safetyNetTriggered, setSafetyNetTriggered] = useState(false);
 
     const setAnswer = useCallback((name: keyof QuizAnswers, value: unknown) => {
         setAnswers(prev => {
@@ -86,7 +89,10 @@ export function useQuiz() {
         const safeAnswers = removeLovedNotesFromAvoided(answers);
         const output: RecommendationOutput = recommendPerfumes(safeAnswers, perfumes);
         setRecommendations(output.results);
+        setBrowsableCollection(output.browsableCollection);
         setUsedFallback(output.usedFallback);
+        setConfidenceLevel(output.confidenceLevel);
+        setSafetyNetTriggered(output.safetyNetTriggered);
         setIsComplete(true);
         setIsLoading(false);
     }, [answers]);
@@ -96,7 +102,10 @@ export function useQuiz() {
         setAnswers(initialAnswers);
         setIsComplete(false);
         setRecommendations(null);
+        setBrowsableCollection([]);
         setUsedFallback(false);
+        setConfidenceLevel('high');
+        setSafetyNetTriggered(false);
     }, []);
 
     const canProceed = useCallback(() => {
@@ -121,7 +130,10 @@ export function useQuiz() {
         isComplete,
         isLoading,
         recommendations,
+        browsableCollection,
         usedFallback,
+        confidenceLevel,
+        safetyNetTriggered,
         canProceed: canProceed()
     };
 }

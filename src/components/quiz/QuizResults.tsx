@@ -1,55 +1,65 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { RecommendationResult } from '@/types';
+import { RecommendationResult, QuizAnswers, ConfidenceLevel } from '@/types';
 import PerfumeCard from './PerfumeCard';
 import { useI18n } from '@/lib/i18n/context';
 
 interface QuizResultsProps {
     recommendations: RecommendationResult[];
+    browsableCollection: RecommendationResult[];
+    answers: QuizAnswers;
     onRetake: () => void;
     usedFallback?: boolean;
+    confidenceLevel: ConfidenceLevel;
+    safetyNetTriggered?: boolean;
 }
 
-export default function QuizResults({ recommendations, onRetake, usedFallback }: QuizResultsProps) {
-    const { t } = useI18n();
+type BrowseFilter = 'all' | 'female' | 'male' | 'unisex' | 'summer' | 'all-seasons';
 
-    if (recommendations.length === 0) {
-        return (
-            <div className="min-h-screen bg-white flex items-center justify-center p-4">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white border border-[#e0e0e0] p-8 text-center max-w-md"
-                >
-                    <div className="w-16 h-16 bg-[#f5f5f5] rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg className="w-8 h-8 text-[#888888]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h2 className="text-xl font-medium text-[#1a1a1a] mb-2">{t('quiz.results.empty.title')}</h2>
-                    <p className="text-[#4a4a4a] text-sm mb-6">
-                        {t('quiz.results.empty.desc')}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <button
-                            onClick={() => window.open('https://lailfragrances.com/', '_blank')}
-                            className="bg-[#6A1B9A] text-white px-6 py-3 text-sm uppercase tracking-wider font-medium hover:bg-[#4A148C] transition"
-                        >
-                            {t('quiz.results.fallback.explore')}
-                        </button>
-                        <button
-                            onClick={onRetake}
-                            className="border border-[#1a1a1a] text-[#1a1a1a] px-6 py-3 text-sm uppercase tracking-wider font-medium hover:bg-[#1a1a1a] hover:text-white transition"
-                        >
-                            {t('quiz.results.fallback.retake')}
-                        </button>
-                    </div>
-                </motion.div>
-            </div>
-        );
-    }
+export default function QuizResults({ recommendations, browsableCollection, answers, onRetake, usedFallback, confidenceLevel, safetyNetTriggered }: QuizResultsProps) {
+    const { t } = useI18n();
+    const [browseFilter, setBrowseFilter] = useState<BrowseFilter>('all');
+
+    const hasTopMatches = recommendations.length > 0;
+
+    // Confidence-based header text
+    const confidenceHeader = (() => {
+        switch (confidenceLevel) {
+            case 'high': return { title1: t('quiz.results.confidence.high.title1'), title2: t('quiz.results.confidence.high.title2'), subtitle: t('quiz.results.confidence.high.subtitle') };
+            case 'medium': return { title1: t('quiz.results.confidence.medium.title1'), title2: t('quiz.results.confidence.medium.title2'), subtitle: t('quiz.results.confidence.medium.subtitle') };
+            case 'low': return { title1: t('quiz.results.confidence.low.title1'), title2: t('quiz.results.confidence.low.title2'), subtitle: t('quiz.results.confidence.low.subtitle') };
+        }
+    })();
+
+    // Filter browsable collection based on selected chip
+    const filteredBrowsable = browsableCollection.filter((result) => {
+        const p = result.perfume;
+        switch (browseFilter) {
+            case 'female': return p.gender === 'female';
+            case 'male': return p.gender === 'male';
+            case 'unisex': return p.gender === 'unisex';
+            case 'summer': return p.seasons?.some(s => s.toLowerCase() === 'summer') ?? false;
+            case 'all-seasons': return p.seasons?.some(s => s.toLowerCase() === 'all') ?? false;
+            default: return true;
+        }
+    });
+
+    // Remove perfumes already shown in top matches from browse section
+    const topMatchIds = new Set(recommendations.map(r => r.perfume.id));
+    const browseResults = filteredBrowsable.filter(r => !topMatchIds.has(r.perfume.id));
+
+    const filterChips: { id: BrowseFilter; label: string }[] = [
+        { id: 'all', label: t('quiz.results.browse.filterAll') },
+        { id: 'female', label: t('home.gender.women') },
+        { id: 'male', label: t('home.gender.men') },
+        { id: 'unisex', label: t('home.gender.unisex') },
+        { id: 'summer', label: t('quiz.results.browse.filterSummer') },
+        { id: 'all-seasons', label: t('quiz.results.browse.filterAllSeasons') },
+    ];
 
     return (
         <div className="min-h-screen bg-[#f5f5f5]">
@@ -83,15 +93,28 @@ export default function QuizResults({ recommendations, onRetake, usedFallback }:
                             {t('quiz.results.complete')}
                         </p>
                         <h2 className="text-3xl md:text-4xl font-light text-[#1a1a1a] mb-3">
-                            {t('quiz.results.title1')} <span className="font-semibold">{t('quiz.results.title2')}</span>
+                            {confidenceHeader.title1} <span className="font-semibold">{confidenceHeader.title2}</span>
                         </h2>
                         <p className="text-[#4a4a4a]">
-                            {t('quiz.results.subtitle')}
+                            {confidenceHeader.subtitle}
                         </p>
                     </motion.div>
 
+                    {/* Safety Net Banner */}
+                    {safetyNetTriggered && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-[#FFF3E0] border border-[#FF9800] p-4 mb-8 text-center"
+                        >
+                            <p className="text-[#4a4a4a] text-sm">
+                                {t('quiz.results.safetyNet.message')}
+                            </p>
+                        </motion.div>
+                    )}
+
                     {/* Fallback Banner */}
-                    {usedFallback && (
+                    {usedFallback && hasTopMatches && (
                         <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -117,24 +140,119 @@ export default function QuizResults({ recommendations, onRetake, usedFallback }:
                         </motion.div>
                     )}
 
-                    {/* Results Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {recommendations.map((result, index) => (
-                            <motion.div
-                                key={result.perfume.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                            >
-                                <PerfumeCard
-                                    perfume={result.perfume}
-                                    matchScore={result.matchScore}
-                                    matchReasons={result.matchReasons}
-                                    rank={index + 1}
-                                />
-                            </motion.div>
-                        ))}
-                    </div>
+                    {/* Top Matches Grid */}
+                    {hasTopMatches && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {recommendations.map((result, index) => (
+                                <motion.div
+                                    key={result.perfume.id}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                >
+                                    <PerfumeCard
+                                        perfume={result.perfume}
+                                        matchScore={result.matchScore}
+                                        matchReasons={result.matchReasons}
+                                        matchReason={result.matchReason}
+                                        rank={index + 1}
+                                    />
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Browse Full Collection Section — ALWAYS rendered */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: hasTopMatches ? 0.4 : 0.2 }}
+                        className="mt-16 pt-10 border-t border-[#e0e0e0]"
+                    >
+                        {/* Section Header */}
+                        <div className="text-center mb-8">
+                            <div className="w-16 h-[2px] bg-[#C9A84C] mx-auto mb-4" />
+                            <h3 className="text-2xl md:text-3xl font-light text-[#1a1a1a] mb-2 font-serif">
+                                {t('quiz.results.browse.title')}
+                            </h3>
+                            <p className="text-[#4a4a4a] text-sm">
+                                {t('quiz.results.browse.subtitle')}
+                            </p>
+                        </div>
+
+                        {/* Filter Chips */}
+                        <div className="flex flex-wrap justify-center gap-2 mb-8">
+                            {filterChips.map((chip) => (
+                                <button
+                                    key={chip.id}
+                                    onClick={() => setBrowseFilter(chip.id)}
+                                    className={`px-4 py-2 text-xs uppercase tracking-wider font-medium border transition ${browseFilter === chip.id
+                                        ? 'bg-[#6A1B9A] text-white border-[#6A1B9A]'
+                                        : 'bg-white text-[#4a4a4a] border-[#dcdcdc] hover:border-[#6A1B9A] hover:text-[#6A1B9A]'
+                                        }`}
+                                >
+                                    {chip.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Browse Grid */}
+                        {browseResults.length > 0 ? (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {browseResults.map((result, index) => (
+                                    <motion.a
+                                        key={result.perfume.id}
+                                        href={result.perfume.sourceUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: Math.min(index * 0.05, 0.3) }}
+                                        className="bg-white group cursor-pointer hover:shadow-[0_4px_16px_rgba(106,27,154,0.12)] transition-all duration-300"
+                                    >
+                                        <div className="relative">
+                                            <span className={`absolute top-2 left-2 z-10 text-[10px] font-medium px-1.5 py-0.5 text-white ${result.perfume.gender === 'female' ? 'bg-[#6A1B9A]' :
+                                                result.perfume.gender === 'male' ? 'bg-[#1a1a1a]' : 'bg-[#666666]'
+                                                }`}>
+                                                {result.perfume.gender === 'female' ? t('home.gender.women') :
+                                                    result.perfume.gender === 'male' ? t('home.gender.men') : t('home.gender.unisex')}
+                                            </span>
+                                            <div className="aspect-square bg-[#f5f5f5] relative overflow-hidden">
+                                                <Image
+                                                    src={result.perfume.imageUrl}
+                                                    alt={result.perfume.name}
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    sizes="(max-width: 768px) 50vw, 25vw"
+                                                />
+                                            </div>
+                                            <div className="absolute bottom-2 right-2 bg-[#6A1B9A]/90 text-white text-[10px] font-semibold px-2 py-1">
+                                                {result.matchScore}%
+                                            </div>
+                                        </div>
+                                        <div className="p-3">
+                                            <h4 className="font-medium text-[#1a1a1a] text-sm truncate">{result.perfume.name}</h4>
+                                            {result.matchReason && (
+                                                <p className="text-[10px] text-[#6A1B9A] mt-0.5 truncate">{result.matchReason}</p>
+                                            )}
+                                            <p className="text-xs text-[#4a4a4a] mt-1">
+                                                {t('home.popular.from')} {result.perfume.price} {result.perfume.currency}
+                                            </p>
+                                            {result.perfume.inspiredBy && result.perfume.inspiredBy !== 'nspired beauty' && (
+                                                <p className="text-[10px] text-[#C9A84C] mt-1 truncate">
+                                                    {t('home.popular.inspiredBy')} {result.perfume.inspiredBy}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </motion.a>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-center text-[#888888] text-sm py-8">
+                                {t('quiz.results.browse.noResults')}
+                            </p>
+                        )}
+                    </motion.div>
 
                     {/* Actions */}
                     <motion.div

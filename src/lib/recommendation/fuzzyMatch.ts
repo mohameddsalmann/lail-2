@@ -82,6 +82,19 @@ export function normalizeNote(note: string): string {
   );
 }
 
+// --- Word-Boundary Substring Match ---
+
+/**
+ * Check if needle appears in haystack at a word boundary.
+ * Prevents false positives like "apple" matching inside "pineapple".
+ * Word boundaries: start of string, end of string, space, or hyphen.
+ */
+function isWordBoundaryMatch(needle: string, haystack: string): boolean {
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`(?<![a-z])${escaped}(?![a-z])`, 'i');
+  return pattern.test(haystack);
+}
+
 // --- Fuzzy Match ---
 
 /**
@@ -89,7 +102,7 @@ export function normalizeNote(note: string): string {
  *
  * Matching criteria (in order of priority):
  * 1. Exact match after normalization (case-insensitive + synonyms)
- * 2. One string contains the other (substring)
+ * 2. Word-boundary substring containment (e.g., "water" matches "water notes" but not "pineapple" for "apple")
  * 3. Levenshtein distance within threshold (short words ≤2, long words ≤3)
  *
  * @returns true if the notes match
@@ -101,8 +114,8 @@ export function fuzzyMatch(noteA: string, noteB: string): boolean {
   // 1. Exact match after normalization
   if (a === b) return true;
 
-  // 2. Substring containment (e.g., "water" matches "water notes")
-  if (a.includes(b) || b.includes(a)) return true;
+  // 2. Word-boundary substring containment
+  if (isWordBoundaryMatch(a, b) || isWordBoundaryMatch(b, a)) return true;
 
   // 3. Levenshtein distance
   const shorter = a.length < b.length ? a : b;
@@ -124,7 +137,7 @@ export function fuzzyMatch(noteA: string, noteB: string): boolean {
     for (const wa of wordsA) {
       for (const wb of wordsB) {
         if (wa === wb) return true;
-        if (wa.includes(wb) || wb.includes(wa)) return true;
+        if (isWordBoundaryMatch(wa, wb) || isWordBoundaryMatch(wb, wa)) return true;
         const wordDist = levenshteinDistance(wa, wb);
         const wordMaxDist = Math.min(wa.length, wb.length) <= RECOMMENDATION_CONFIG.SHORT_WORD_THRESHOLD
           ? RECOMMENDATION_CONFIG.LEVENSHTEIN_MAX_SHORT

@@ -326,7 +326,7 @@ export function recommendPerfumes(
   answers: QuizAnswers,
   perfumeList: Perfume[]
 ): RecommendationOutput {
-  const excludedSlugs = new Set(RECOMMENDATION_CONFIG.EXCLUDED_PERFUME_SLUGS);
+  const excludedSlugs = new Set<string>([...RECOMMENDATION_CONFIG.EXCLUDED_PERFUME_SLUGS]);
   const catalog = perfumeList.filter((p) => !excludedSlugs.has(p.slug));
 
   // BUG 3+4: Normalize user input notes (dedup + synonym resolution)

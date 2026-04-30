@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Perfume } from '@/types';
+import { useState } from 'react';
 import MatchReasons from './MatchReasons';
 import { useI18n } from '@/lib/i18n/context';
 
@@ -16,6 +17,8 @@ interface PerfumeCardProps {
 
 export default function PerfumeCard({ perfume, matchScore, matchReasons, matchReason, rank }: PerfumeCardProps) {
     const { t } = useI18n();
+    const [selectedSize, setSelectedSize] = useState(perfume.sizes?.[0]?.size ?? 50);
+    const currentPrice = perfume.sizes?.find(s => s.size === selectedSize)?.price ?? perfume.price;
 
     const getBadge = () => {
         switch (rank) {
@@ -95,9 +98,24 @@ export default function PerfumeCard({ perfume, matchScore, matchReasons, matchRe
                     <p className="text-xs text-[#6A1B9A] mt-1">{matchReason}</p>
                 )}
 
+                {/* Size Selector */}
+                {perfume.sizes && perfume.sizes.length > 1 && (
+                    <div className="flex gap-2 mt-2">
+                        {perfume.sizes.map(s => (
+                            <button
+                                key={s.size}
+                                onClick={() => setSelectedSize(s.size)}
+                                className={`px-3 py-1 text-xs font-medium border transition ${selectedSize === s.size ? 'border-[#6A1B9A] bg-[#6A1B9A] text-white' : 'border-[#e0e0e0] bg-white text-[#4a4a4a] hover:border-[#6A1B9A]/40'}`}
+                            >
+                                {s.size}ml
+                            </button>
+                        ))}
+                    </div>
+                )}
+
                 {/* Price */}
                 <p className="text-sm text-[#4a4a4a] mt-1">
-                    {t('perfume.from')} {perfume.price} {perfume.currency}
+                    {t('perfume.from')} {currentPrice} {perfume.currency}
                 </p>
 
                 {/* Star Rating */}

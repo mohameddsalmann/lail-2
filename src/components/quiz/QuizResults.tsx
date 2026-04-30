@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -236,7 +236,10 @@ export default function QuizResults({ recommendations, browsableCollection, answ
                                                 <p className="text-[10px] text-[#6A1B9A] mt-0.5 truncate">{result.matchReason}</p>
                                             )}
                                             <p className="text-xs text-[#4a4a4a] mt-1">
-                                                {t('home.popular.from')} {result.perfume.price} {result.perfume.currency}
+                                                {t('home.popular.from')} {result.perfume.sizes?.[0]?.price ?? result.perfume.price} {result.perfume.currency}
+                                                {result.perfume.sizes && result.perfume.sizes.length > 1 && (
+                                                    <span className="text-[10px] text-[#888888]"> · {result.perfume.sizes.map(s => `${s.size}ml`).join(' / ')}</span>
+                                                )}
                                             </p>
                                             {result.perfume.inspiredBy && result.perfume.inspiredBy !== 'nspired beauty' && (
                                                 <p className="text-[10px] text-[#C9A84C] mt-1 truncate">

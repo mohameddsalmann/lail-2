@@ -1,11 +1,16 @@
 // Types for the Lail Fragrances Perfume Recommendation Quiz
 
+export interface PerfumeSize {
+  size: number; // ml
+  price: number;
+}
+
 export interface Perfume {
   id: string;
   name: string;
   slug: string;
   inspiredBy: string | null;
-  price: number;
+  price: number; // deprecated — use sizes[0].price instead
   currency: string;
   gender: 'male' | 'female' | 'unisex';
   description: string;
@@ -15,6 +20,7 @@ export interface Perfume {
   mainNotes: string[];       // ORDERED from most important to least important (drives position scoring)
   seasons: string[];          // e.g. ["summer", "spring", "all"]
   longevity: 'moderate' | 'strong' | 'enormous';
+  sizes: PerfumeSize[];
   notes: {
     top: string[];
     middle: string[];

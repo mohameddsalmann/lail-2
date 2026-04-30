@@ -4,7 +4,7 @@
     "name": "Summer hammer (Bali)",
     "slug": "summer-hammer-bali",
     "inspiredBy": null,
-    "price": 0,
+    "price": 1100,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -35,14 +35,24 @@
       "base": [
         "White rum"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 1100
+      },
+      {
+        "size": 30,
+        "price": 880
+      }
+    ]
   },
   {
     "id": "2",
     "name": "Erba pura xerjoff (Trobica )",
     "slug": "erba-pura-xerjoff-trobica",
     "inspiredBy": null,
-    "price": 0,
+    "price": 950,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -71,14 +81,24 @@
       "base": [
         "Amber"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 950
+      },
+      {
+        "size": 30,
+        "price": 760
+      }
+    ]
   },
   {
     "id": "3",
     "name": "Le beau paradis garden ( Maldives)",
     "slug": "le-beau-paradis-garden-maldives",
     "inspiredBy": null,
-    "price": 0,
+    "price": 850,
     "currency": "EGP",
     "gender": "male",
     "description": "",
@@ -109,14 +129,24 @@
       "base": [
         "Mint"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 850
+      },
+      {
+        "size": 30,
+        "price": 680
+      }
+    ]
   },
   {
     "id": "4",
     "name": "Y edp ( Blue nights )",
     "slug": "y-edp-blue-nights",
     "inspiredBy": null,
-    "price": 0,
+    "price": 700,
     "currency": "EGP",
     "gender": "male",
     "description": "",
@@ -144,14 +174,24 @@
       "base": [
         "Juniper Berries"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 700
+      },
+      {
+        "size": 30,
+        "price": 560
+      }
+    ]
   },
   {
     "id": "5",
     "name": "Burberry gold ( Ranoula )",
     "slug": "burberry-gold-ranoula",
     "inspiredBy": null,
-    "price": 0,
+    "price": 750,
     "currency": "EGP",
     "gender": "female",
     "description": "",
@@ -180,14 +220,24 @@
       "base": [
         "Cacao"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 750
+      },
+      {
+        "size": 30,
+        "price": 700
+      }
+    ]
   },
   {
     "id": "6",
     "name": "apple brandy (tuxedo)",
     "slug": "apple-brandy-tuxedo",
     "inspiredBy": null,
-    "price": 0,
+    "price": 1100,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -217,14 +267,24 @@
       "base": [
         "Pineapple"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 1100
+      },
+      {
+        "size": 30,
+        "price": 880
+      }
+    ]
   },
   {
     "id": "7",
     "name": "imagination by lv (spark)",
     "slug": "imagination-by-lv-spark",
     "inspiredBy": null,
-    "price": 0,
+    "price": 900,
     "currency": "EGP",
     "gender": "male",
     "description": "",
@@ -255,14 +315,24 @@
       "base": [
         "Neroli"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 900
+      },
+      {
+        "size": 30,
+        "price": 720
+      }
+    ]
   },
   {
     "id": "8",
     "name": "symphony by lv (Symphony)",
     "slug": "symphony-by-lv-symphony",
     "inspiredBy": null,
-    "price": 0,
+    "price": 999,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -289,14 +359,24 @@
       "base": [
         "Ginger"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 999
+      },
+      {
+        "size": 30,
+        "price": 799
+      }
+    ]
   },
   {
     "id": "9",
     "name": "pacific chill by lv ( breeze)",
     "slug": "pacific-chill-by-lv-breeze",
     "inspiredBy": null,
-    "price": 0,
+    "price": 900,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -329,14 +409,24 @@
         "Lemon",
         "Mint"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 900
+      },
+      {
+        "size": 30,
+        "price": 720
+      }
+    ]
   },
   {
     "id": "10",
     "name": "nishane hacivat ( denaro)",
     "slug": "nishane-hacivat-denaro",
     "inspiredBy": null,
-    "price": 0,
+    "price": 700,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -365,14 +455,24 @@
       "base": [
         "Woods"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 700
+      },
+      {
+        "size": 30,
+        "price": 560
+      }
+    ]
   },
   {
     "id": "11",
     "name": "valero ( valero x )",
     "slug": "valero-valero-x",
     "inspiredBy": null,
-    "price": 0,
+    "price": 1200,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -401,14 +501,24 @@
       "base": [
         "Citron"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 1200
+      },
+      {
+        "size": 30,
+        "price": 960
+      }
+    ]
   },
   {
     "id": "12",
     "name": "tygar bvlgari ( ليث )",
     "slug": "tygar-bvlgari",
     "inspiredBy": null,
-    "price": 0,
+    "price": 1100,
     "currency": "EGP",
     "gender": "male",
     "description": "",
@@ -437,14 +547,24 @@
       "base": [
         "Ginger"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 1100
+      },
+      {
+        "size": 30,
+        "price": 880
+      }
+    ]
   },
   {
     "id": "13",
     "name": "gød of fire (عويس)",
     "slug": "g-d-of-fire",
     "inspiredBy": null,
-    "price": 0,
+    "price": 1200,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -477,14 +597,24 @@
         "Berries",
         "Amber"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 1200
+      },
+      {
+        "size": 30,
+        "price": 960
+      }
+    ]
   },
   {
     "id": "14",
     "name": "Dylan blue (raven)",
     "slug": "dylan-blue-raven",
     "inspiredBy": null,
-    "price": 0,
+    "price": 1100,
     "currency": "EGP",
     "gender": "male",
     "description": "",
@@ -517,14 +647,24 @@
         "Incense",
         "Pepper"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 1100
+      },
+      {
+        "size": 30,
+        "price": 880
+      }
+    ]
   },
   {
     "id": "15",
     "name": "steller times ( Majestic )",
     "slug": "steller-times-majestic",
     "inspiredBy": null,
-    "price": 0,
+    "price": 900,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -551,14 +691,24 @@
       "base": [
         "Wood notes"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 900
+      },
+      {
+        "size": 30,
+        "price": 740
+      }
+    ]
   },
   {
     "id": "16",
     "name": "torino 21 ( Mintos )",
     "slug": "torino-21-mintos",
     "inspiredBy": null,
-    "price": 0,
+    "price": 800,
     "currency": "EGP",
     "gender": "unisex",
     "description": "",
@@ -587,14 +737,24 @@
       "base": [
         "Black currant"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 800
+      },
+      {
+        "size": 30,
+        "price": 640
+      }
+    ]
   },
   {
     "id": "17",
     "name": "le bau la parfume (woody coconut )",
     "slug": "le-bau-la-parfume-woody-coconut",
     "inspiredBy": null,
-    "price": 0,
+    "price": 700,
     "currency": "EGP",
     "gender": "male",
     "description": "",
@@ -625,14 +785,24 @@
       "base": [
         "Wood notes"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 700
+      },
+      {
+        "size": 30,
+        "price": 560
+      }
+    ]
   },
   {
     "id": "18",
     "name": "Yum Boujee Marshmallow | 81 Kayali (Crème de nuit)",
     "slug": "yum-boujee-marshmallow-81-kayali-cr-me-de-nuit",
     "inspiredBy": null,
-    "price": 0,
+    "price": 750,
     "currency": "EGP",
     "gender": "female",
     "description": "",
@@ -662,14 +832,24 @@
       "base": [
         "Vanilla"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 750
+      },
+      {
+        "size": 30,
+        "price": 600
+      }
+    ]
   },
   {
     "id": "19",
     "name": "Delina exclusif (Florenza)",
     "slug": "delina-exclusif-florenza",
     "inspiredBy": null,
-    "price": 0,
+    "price": 700,
     "currency": "EGP",
     "gender": "female",
     "description": "",
@@ -699,14 +879,24 @@
       "base": [
         "Amber"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 700
+      },
+      {
+        "size": 30,
+        "price": 560
+      }
+    ]
   },
   {
     "id": "20",
     "name": "Bianco latte (Sweet honey )",
     "slug": "bianco-latte-sweet-honey",
     "inspiredBy": null,
-    "price": 0,
+    "price": 800,
     "currency": "EGP",
     "gender": "female",
     "description": "",
@@ -734,6 +924,16 @@
       "base": [
         "Musk"
       ]
-    }
+    },
+    "sizes": [
+      {
+        "size": 50,
+        "price": 800
+      },
+      {
+        "size": 30,
+        "price": 640
+      }
+    ]
   }
 ]

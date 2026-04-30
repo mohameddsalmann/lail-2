@@ -11,7 +11,7 @@ A [Next.js](https://nextjs.org) perfume recommendation app for **nspired Beauty*
 
 ## Getting Started
 
-```bash
+```bashssss
 npm install
 npm run dev
 ```

@@ -39,6 +39,9 @@ export const RECOMMENDATION_CONFIG = {
   RICH_PROFILE_THRESHOLD: 6,  // Min total notes for rich profile bonus
   MIN_GUARANTEED_RESULTS: 3,  // Always return at least this many recommendations
 
+  /** Product slugs omitted from quiz recommendations (still in catalog JSON). */
+  EXCLUDED_PERFUME_SLUGS: ['torino-21-mintos', 'valero-valero-x'],
+
   // --- Confidence Tiers ---
   CONFIDENCE_HIGH_THRESHOLD: 45,    // Score ≥ 45 → "high" confidence
   CONFIDENCE_MEDIUM_THRESHOLD: 25,  // Score ≥ 25 → "medium" confidence

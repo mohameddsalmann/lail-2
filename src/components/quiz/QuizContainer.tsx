@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useQuiz } from '@/hooks/useQuiz';
 import { quizSteps } from '@/config/quizSteps';
@@ -13,6 +14,135 @@ import QuizResults from './QuizResults';
 import { useI18n } from '@/lib/i18n/context';
 
 const elegantSpring = { type: 'spring' as const, stiffness: 350, damping: 28 };
+
+/** Premium full-screen loader shown while matches are computed. */
+function QuizLoadingScreen() {
+    const { t } = useI18n();
+    const [phase, setPhase] = useState(0);
+
+    useEffect(() => {
+        const id = window.setInterval(() => setPhase((p) => (p + 1) % 3), 900);
+        return () => window.clearInterval(id);
+    }, []);
+
+    const stages = [
+        t('quiz.step.favoriteNotes.eyebrow'),
+        t('quiz.step.season.eyebrow'),
+        t('quiz.step.intensity.eyebrow'),
+    ];
+
+    return (
+        <div className="relative min-h-screen overflow-hidden bg-[#faf9fc] text-[#121212]">
+            <div
+                className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_85%_55%_at_50%_-8%,rgba(106,27,154,0.11),transparent_55%)]"
+                aria-hidden
+            />
+            <div
+                className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_80%_90%,rgba(201,168,76,0.06),transparent_40%)]"
+                aria-hidden
+            />
+
+            <QuizTopBar />
+
+            <div className="relative mx-auto flex min-h-[calc(100vh-7rem)] max-w-lg items-center justify-center px-4 py-14 sm:max-w-xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={elegantSpring}
+                    className="relative w-full"
+                >
+                    <div
+                        className="absolute -inset-px rounded-sm bg-gradient-to-br from-[#6A1B9A]/15 via-transparent to-[#C9A84C]/10 opacity-90"
+                        aria-hidden
+                    />
+                    <div className="relative overflow-hidden rounded-sm border border-[#e6e2eb] bg-white/95 px-8 py-11 text-center shadow-[0_22px_55px_-18px_rgba(106,27,154,0.18)] backdrop-blur-[2px] sm:px-12 sm:py-14">
+                        <motion.div
+                            className="absolute inset-x-0 bottom-0 h-px overflow-hidden"
+                            aria-hidden
+                        >
+                            <motion.div
+                                className="h-full w-1/2 bg-gradient-to-r from-transparent via-[#6A1B9A]/70 to-transparent"
+                                animate={{ x: ['-80%', '280%'] }}
+                                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                            />
+                        </motion.div>
+
+                        <div className="relative mx-auto h-[4.75rem] w-[4.75rem]">
+                            <motion.div
+                                className="absolute inset-0 rounded-full border-2 border-[#e8e0f0] border-t-[#6A1B9A] border-r-[#6A1B9A]/40"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1.15, repeat: Infinity, ease: 'linear' }}
+                                aria-hidden
+                            />
+                            <motion.div
+                                className="absolute inset-2 rounded-full border-2 border-transparent border-b-[#9575cd] border-l-[#b39ddb]/60"
+                                animate={{ rotate: -360 }}
+                                transition={{ duration: 1.65, repeat: Infinity, ease: 'linear' }}
+                                aria-hidden
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <motion.span
+                                    className="h-2 w-2 rounded-full bg-[#6A1B9A] shadow-[0_0_12px_rgba(106,27,154,0.55)]"
+                                    animate={{ scale: [1, 1.4, 1], opacity: [0.85, 1, 0.85] }}
+                                    transition={{ duration: 1.35, repeat: Infinity, ease: 'easeInOut' }}
+                                    aria-hidden
+                                />
+                            </div>
+                        </div>
+
+                        <motion.p
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ ...elegantSpring, delay: 0.08 }}
+                            className="site-eyebrow mt-8"
+                        >
+                            {t('quiz.loading.eyebrow')}
+                        </motion.p>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ ...elegantSpring, delay: 0.14 }}
+                            className="mt-3 font-serif text-[1.35rem] font-medium leading-snug text-[#121212] sm:text-[1.55rem]"
+                        >
+                            {t('quiz.loading.title')}
+                        </motion.h2>
+                        <motion.p
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ ...elegantSpring, delay: 0.2 }}
+                            className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#5a5a5a] sm:text-[0.9375rem]"
+                        >
+                            {t('quiz.loading.desc')}
+                        </motion.p>
+
+                        <div className="mt-9 flex flex-wrap items-center justify-center gap-2">
+                            {stages.map((label, i) => (
+                                <motion.span
+                                    key={`loading-stage-${i}`}
+                                    animate={{
+                                        scale: phase === i ? 1.04 : 1,
+                                        opacity: phase === i ? 1 : 0.5,
+                                    }}
+                                    transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+                                    className={
+                                        'rounded-full border px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] ' +
+                                        (phase === i
+                                            ? 'border-[#6A1B9A]/45 bg-[#f3eafc] text-[#5a1578]'
+                                            : 'border-[#e8e8e8] bg-[#fafafa] text-[#757575]')
+                                    }
+                                >
+                                    {label}
+                                </motion.span>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+
+            <StoreFooter />
+        </div>
+    );
+}
 
 export default function QuizContainer() {
     const { t } = useI18n();
@@ -41,29 +171,7 @@ export default function QuizContainer() {
     }
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-white text-[#121212]">
-                <QuizTopBar />
-                <div className="mx-auto flex min-h-[70vh] max-w-lg items-center justify-center px-4 py-12 sm:max-w-xl">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={elegantSpring}
-                        className="site-card w-full p-10 text-center"
-                    >
-                        <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                            className="mx-auto h-12 w-12 border-2 border-[#6A1B9A] border-t-transparent"
-                        />
-                        <p className="site-eyebrow mt-6">{t('quiz.loading.eyebrow')}</p>
-                        <h2 className="mt-4 font-serif text-2xl font-medium text-[#121212]">{t('quiz.loading.title')}</h2>
-                        <p className="mt-4 text-base leading-relaxed text-[#4d4d4d]">{t('quiz.loading.desc')}</p>
-                    </motion.div>
-                </div>
-                <StoreFooter />
-            </div>
-        );
+        return <QuizLoadingScreen />;
     }
 
     const step = quizSteps[currentStep];

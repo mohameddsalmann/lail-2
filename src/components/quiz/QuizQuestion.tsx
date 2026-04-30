@@ -17,6 +17,11 @@ interface QuizQuestionProps {
 }
 
 const elegantSpring = { type: 'spring' as const, stiffness: 350, damping: 28 };
+const INTENSITY_EFFECTS: Record<string, 'moderate' | 'strong' | 'enormous'> = {
+    light: 'moderate',
+    moderate: 'strong',
+    strong: 'enormous',
+};
 
 const stepCopy: Record<string, { eyebrow: string; title: string; description: string }> = {
     gender: {
@@ -234,6 +239,7 @@ export default function QuizQuestion({ step, value, onChange, otherAnswers }: Qu
                         onSelect={(id) => onChange(id)}
                         hintKeyByOptionId={step.name === 'gender' ? GENDER_HINT_KEYS : undefined}
                         layout={step.name === 'season' ? 'season-grid' : 'stack'}
+                        selectionFxByOptionId={step.name === 'intensity' ? INTENSITY_EFFECTS : undefined}
                     />
                 </div>
             </motion.div>

@@ -142,6 +142,8 @@ export const ar: Record<string, string> = {
     'notes.quickPicks': 'اختيارات سريعة',
     'notes.seeAll': 'عرض الكل',
     'notes.hideCatalog': 'عرض أقل',
+    'notes.tapToBrowseCatalog': 'اضغط لتصفح جميع النوتات',
+    'notes.tapToCollapseCatalog': 'اضغط لطي القائمة',
     'notes.badgeBoost': 'نوتات للتمييز',
     'notes.badgeFilter': 'نوتات للتخطي',
 

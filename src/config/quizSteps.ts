@@ -159,11 +159,11 @@ export const quizSteps: QuizStep[] = [
         required: true,
         skippable: false,
         options: [
-            { id: 'spring', label: 'Spring', labelAr: 'الربيع', icon: 'spring', description: 'Light & fresh' },
-            { id: 'summer', label: 'Summer', labelAr: 'الصيف', icon: 'summer', description: 'Citrus & aquatic' },
-            { id: 'fall', label: 'Fall', labelAr: 'الخريف', icon: 'fall', description: 'Warm & spicy' },
-            { id: 'winter', label: 'Winter', labelAr: 'الشتاء', icon: 'winter', description: 'Rich & cozy' },
-            { id: 'all', label: 'All Year', labelAr: 'طوال السنة', icon: 'calendar', description: 'Versatile' },
+            { id: 'spring', label: 'Spring', labelAr: 'الربيع', icon: 'spring', iconImage: '/icons/scents/step4-5/spring.png', description: 'Light & fresh' },
+            { id: 'summer', label: 'Summer', labelAr: 'الصيف', icon: 'summer', iconImage: '/icons/scents/step4-5/summer.png', description: 'Citrus & aquatic' },
+            { id: 'fall', label: 'Fall', labelAr: 'الخريف', icon: 'fall', iconImage: '/icons/scents/step4-5/fall.png', description: 'Warm & spicy' },
+            { id: 'winter', label: 'Winter', labelAr: 'الشتاء', icon: 'winter', iconImage: '/icons/scents/step4-5/winter.png', description: 'Rich & cozy' },
+            { id: 'all', label: 'All Year', labelAr: 'طوال السنة', icon: 'calendar', iconImage: '/icons/scents/step4-5/allyear.png', description: 'Versatile' },
         ]
     },
     {
@@ -175,9 +175,30 @@ export const quizSteps: QuizStep[] = [
         required: true,
         skippable: false,
         options: [
-            { id: 'light', label: 'Moderate', labelAr: 'معتدل', icon: 'light', description: 'Soft landing' },
-            { id: 'moderate', label: 'Strong', labelAr: 'قوي', icon: 'moderate', description: 'Noticeable' },
-            { id: 'strong', label: 'Enormous', labelAr: 'هائل', icon: 'strong', description: 'Fills the room' }
+            {
+                id: 'light',
+                label: 'Moderate',
+                labelAr: 'معتدل',
+                icon: 'light',
+                iconImage: '/icons/scents/step4-5/moderate.png',
+                description: 'Soft landing'
+            },
+            {
+                id: 'moderate',
+                label: 'Strong',
+                labelAr: 'قوي',
+                icon: 'moderate',
+                iconImage: '/icons/scents/step4-5/strong.png',
+                description: 'Noticeable'
+            },
+            {
+                id: 'strong',
+                label: 'Enormous',
+                labelAr: 'هائل',
+                icon: 'strong',
+                iconImage: '/icons/scents/step4-5/enormous.png',
+                description: 'Fills the room'
+            }
         ]
     }
 ];

@@ -134,16 +134,6 @@ const catalog: Record<string, Recommendation> = {
         image: '/images/bright-tide.jpg',
         topNote: 'Black Tea + Bergamot',
     },
-    'mintos': {
-        name: 'Mintos',
-        inspiredBy: 'Menthe Fraîche',
-        vibe: 'A burst of cool mint that wakes up every sense.',
-        bestFor: 'Hot summer days, morning freshness',
-        whySpecial: 'Pure mint and lemon — the freshest wake-up call in a bottle.',
-        shopUrl: SHOP,
-        image: '/images/bright-tide.jpg',
-        topNote: 'Mint + Lemon',
-    },
     'bali': {
         name: 'Bali',
         inspiredBy: 'Summer Hammer',
@@ -168,8 +158,8 @@ const catalog: Record<string, Recommendation> = {
 
 const recommendations: Record<string, string[]> = {
     'morning-sweet': ['tropica', 'bali', 'creme-de-nuit'],
-    'morning-woody': ['denaro', 'spark', 'mintos'],
-    'morning-fresh': ['maldives', 'woody-coconut', 'mintos'],
+    'morning-woody': ['denaro', 'spark', 'tuxedo'],
+    'morning-fresh': ['maldives', 'woody-coconut', 'laith'],
     'night-sweet': ['ranoula', 'sweet-honey', 'florenza'],
     'night-woody': ['blue-night', 'tuxedo', 'denaro'],
     'night-fresh': ['blue-night', 'laith', 'spark'],

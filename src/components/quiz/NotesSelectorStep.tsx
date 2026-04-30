@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fragranceNotes, noteCategories, quickPickNoteIds, uniqueAllNotes } from '@/config/quizSteps';
@@ -50,6 +50,7 @@ export default function NotesSelectorStep({
     const [search, setSearch] = useState('');
     const [showAllCatalog, setShowAllCatalog] = useState(false);
     const [expandedCategories, setExpandedCategories] = useState<Set<string>>(() => new Set());
+    const catalogRef = useRef<HTMLDivElement | null>(null);
 
     const totalCatalogCount = uniqueAllNotes.length;
 
@@ -74,6 +75,14 @@ export default function NotesSelectorStep({
         if (!showAllCatalog) {
             setExpandedCategories(new Set());
         }
+    }, [showAllCatalog]);
+
+    useEffect(() => {
+        if (!showAllCatalog) return;
+        const frameId = window.requestAnimationFrame(() => {
+            catalogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return () => window.cancelAnimationFrame(frameId);
     }, [showAllCatalog]);
 
     useEffect(() => {
@@ -292,26 +301,86 @@ export default function NotesSelectorStep({
             </div>
 
             {/* See all — expands full catalog */}
-            <button
+            <motion.button
                 type="button"
                 onClick={() => {
                     setShowAllCatalog((v) => !v);
                     if (showAllCatalog) setSearch('');
                 }}
+                whileTap={{ scale: 0.99 }}
+                animate={{
+                    scale: showAllCatalog ? 1.005 : 1,
+                }}
+                transition={{ ...elegantSpring, duration: 0.32 }}
                 className={
-                    'flex w-full items-center justify-center gap-2 rounded-sm border border-dashed border-[#c4c4c4] bg-white px-4 py-3 text-sm font-medium text-[#1a1a1a] transition ' +
+                    'flex w-full items-center gap-3 rounded-sm px-4 py-3 text-left text-sm text-[#1a1a1a] transition ' +
                     (isLove
-                        ? 'hover:border-[#6A1B9A]/45 hover:bg-[#6A1B9A]/[0.03]'
-                        : 'hover:border-[#e53935]/40 hover:bg-[#e53935]/[0.06]')
+                        ? 'border-[#d9c6ea] bg-[#f7f0fd] hover:border-[#6A1B9A]/45 hover:bg-[#f4e9fc]'
+                        : 'border-[#efc2c0] bg-[#fff3f3] hover:border-[#e53935]/45 hover:bg-[#ffeded]')
                 }
             >
-                <span>
-                    {showAllCatalog ? t('notes.hideCatalog') : `${t('notes.seeAll')} (${totalCatalogCount})`}
+                <motion.span
+                    animate={{
+                        backgroundColor: showAllCatalog
+                            ? isLove
+                                ? '#7B1FA2'
+                                : '#d32f2f'
+                            : isLove
+                              ? '#6A1B9A'
+                              : '#e53935',
+                        rotate: showAllCatalog ? 90 : 0,
+                        scale: showAllCatalog ? 1.04 : 1,
+                        y: 0,
+                        opacity: 1,
+                    }}
+                    transition={{ ...elegantSpring, stiffness: 380 }}
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white"
+                    aria-hidden
+                >
+                    <motion.svg
+                        animate={{
+                            scale: showAllCatalog ? [1.06, 1.12, 1.06] : [1, 1.1, 1],
+                            rotate: showAllCatalog ? [0, -6, 0, 6, 0] : [0, 8, 0, -8, 0],
+                            opacity: 1,
+                        }}
+                        transition={{ duration: showAllCatalog ? 1.05 : 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                        className="h-3.5 w-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M12 6v12M6 12h12" />
+                    </motion.svg>
+                </motion.span>
+                <span className="min-w-0 flex-1">
+                    <span className="block text-[19px] font-semibold leading-tight text-[#2a2a2a] sm:text-[20px]">
+                        {showAllCatalog ? t('notes.hideCatalog') : `${t('notes.seeAll')} (${totalCatalogCount})`}
+                    </span>
+                    <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                            key={showAllCatalog ? 'hintHide' : 'hintSee'}
+                            initial={{ opacity: 0, y: 3 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -3 }}
+                            transition={{ duration: 0.18 }}
+                            className="mt-0.5 block text-xs text-[#8a8a8a]"
+                        >
+                            {showAllCatalog ? t('notes.tapToCollapseCatalog') : t('notes.tapToBrowseCatalog')}
+                        </motion.span>
+                    </AnimatePresence>
                 </span>
                 <motion.svg
-                    animate={{ rotate: showAllCatalog ? 180 : 0 }}
-                    transition={elegantSpring}
-                    className="h-4 w-4 text-[#666]"
+                    animate={{
+                        rotate: showAllCatalog ? 180 : 0,
+                        y: showAllCatalog ? 1 : [0, 2, 0],
+                        scale: showAllCatalog ? 1.02 : [1, 1.06, 1],
+                    }}
+                    transition={
+                        showAllCatalog
+                            ? { ...elegantSpring, stiffness: 420 }
+                            : { duration: 1.2, repeat: Infinity, ease: 'easeInOut' }
+                    }
+                    className="h-5 w-5 shrink-0 text-[#5f5f5f]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -319,21 +388,22 @@ export default function NotesSelectorStep({
                 >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </motion.svg>
-            </button>
+            </motion.button>
 
             <AnimatePresence initial={false}>
                 {showAllCatalog && (
                     <motion.div
+                        ref={catalogRef}
                         initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+                        animate={{ height: 'auto', opacity: 1, y: 0 }}
+                        exit={{ height: 0, opacity: 0, y: -4 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 32, mass: 0.7 }}
                         className="space-y-5 overflow-hidden"
                     >
                         <div className={`${shellClass} p-4`}>
                             <div className="relative">
                                 <svg
-                                    className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#7a7a7a]"
+                                    className="pointer-events-none absolute left-3 top-1/2 h-4.5 w-4.5 -translate-y-1/2 text-[#666]"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -351,7 +421,7 @@ export default function NotesSelectorStep({
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder={t('notes.search')}
                                     className={
-                                        'w-full rounded-sm border border-[#e5e5e5] bg-white py-3 pl-10 pr-4 text-sm text-[#121212] outline-none transition placeholder:text-[#9a9a9a] ' +
+                                        'w-full rounded-sm border border-[#dcdcdc] bg-white py-3 pl-12 pr-4 text-[15px] text-[#111] outline-none transition placeholder:text-[#6d6d6d] placeholder:opacity-100 ' +
                                         (isLove ? 'focus:border-[#6A1B9A]/50' : 'focus:border-[#e53935]/45')
                                     }
                                 />

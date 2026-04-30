@@ -683,7 +683,7 @@ describe('recommendPerfumes — real catalog', () => {
     expect(slugs).toContain('delina-exclusif-florenza');
   });
 
-  it('recommends mint/fresh fragrances (Mintos) for mint + lemon brief', () => {
+  it('excludes Mintos from recommendations for mint + lemon brief', () => {
     const answers: QuizAnswers = {
       gender: 'unisex',
       favoriteNotes: ['mint', 'lemon', 'basil'],
@@ -695,7 +695,7 @@ describe('recommendPerfumes — real catalog', () => {
 
     expect(results.length).toBeGreaterThan(0);
     const slugs = results.map(r => r.perfume.slug);
-    expect(slugs).toContain('torino-21-mintos');
+    expect(slugs).not.toContain('torino-21-mintos');
   });
 
   it('recommends Spark (Thé Noir 29) for tea + citron + bergamot brief', () => {

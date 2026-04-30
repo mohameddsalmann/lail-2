@@ -142,6 +142,8 @@ export const en: Record<string, string> = {
     'notes.quickPicks': 'Quick picks',
     'notes.seeAll': 'See all',
     'notes.hideCatalog': 'Show less',
+    'notes.tapToBrowseCatalog': 'Tap to browse the full notes catalog',
+    'notes.tapToCollapseCatalog': 'Tap to collapse the catalog',
     'notes.badgeBoost': 'Notes to boost',
     'notes.badgeFilter': 'Notes to skip',
 

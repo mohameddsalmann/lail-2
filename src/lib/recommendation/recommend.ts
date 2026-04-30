@@ -326,6 +326,9 @@ export function recommendPerfumes(
   answers: QuizAnswers,
   perfumeList: Perfume[]
 ): RecommendationOutput {
+  const excludedSlugs = new Set(RECOMMENDATION_CONFIG.EXCLUDED_PERFUME_SLUGS);
+  const catalog = perfumeList.filter((p) => !excludedSlugs.has(p.slug));
+
   // BUG 3+4: Normalize user input notes (dedup + synonym resolution)
   const normalizedAnswers: QuizAnswers = {
     ...answers,
@@ -334,7 +337,7 @@ export function recommendPerfumes(
   };
 
   // Stage 1: Strict thresholds
-  let results = runScoring(normalizedAnswers, perfumeList, {
+  let results = runScoring(normalizedAnswers, catalog, {
     matchRatio: RECOMMENDATION_CONFIG.MIN_MATCH_RATIO,
     minScore: RECOMMENDATION_CONFIG.MIN_TOTAL_SCORE,
   });
@@ -343,7 +346,7 @@ export function recommendPerfumes(
 
   // Stage 2: Relax match ratio
   if (usedFallback) {
-    results = runScoring(normalizedAnswers, perfumeList, {
+    results = runScoring(normalizedAnswers, catalog, {
       matchRatio: RECOMMENDATION_CONFIG.MIN_MATCH_RATIO_FALLBACK,
       minScore: RECOMMENDATION_CONFIG.MIN_TOTAL_SCORE,
     });
@@ -351,14 +354,14 @@ export function recommendPerfumes(
 
   // Stage 3: Lower score floor as last resort
   if (results.length < RECOMMENDATION_CONFIG.MIN_GUARANTEED_RESULTS) {
-    results = runScoring(normalizedAnswers, perfumeList, {
+    results = runScoring(normalizedAnswers, catalog, {
       matchRatio: RECOMMENDATION_CONFIG.MIN_MATCH_RATIO_FALLBACK,
       minScore: 15,
     });
   }
 
   // Build full scored list for confidence tier fallback
-  let allScored = buildBrowsableCollection(normalizedAnswers, perfumeList);
+  let allScored = buildBrowsableCollection(normalizedAnswers, catalog);
 
   // Apply confidence tiers and guarantee minimum results
   let { recommendations, confidenceLevel } = getRecommendations(results, allScored);
@@ -368,7 +371,7 @@ export function recommendPerfumes(
   let safetyNetTriggered = false;
   if (recommendations.length === 0) {
     safetyNetTriggered = true;
-    const safetyNet = perfumeList
+    const safetyNet = catalog
       .filter(p => passesGenderFilter(p, normalizedAnswers))
       .filter(p => passesStockFilter(p))
       .map(p => scorePerfume(normalizedAnswers, p))
@@ -380,7 +383,7 @@ export function recommendPerfumes(
     confidenceLevel = 'low';
 
     // Also rebuild browsable collection without avoid filter
-    allScored = perfumeList
+    allScored = catalog
       .filter(p => passesGenderFilter(p, normalizedAnswers))
       .filter(p => passesStockFilter(p))
       .map(p => scorePerfume(normalizedAnswers, p))

@@ -5,7 +5,7 @@
  * Each function returns a score from 0 to its max points, plus match reasons.
  */
 
-import { Perfume, QuizAnswers, RecommendationResult } from '@/types';
+import { Perfume, QuizAnswers } from '@/types';
 import { RECOMMENDATION_CONFIG } from './config';
 import { fuzzyMatch } from './fuzzyMatch';
 import { getUserCategories, getPerfumeCategories, setIntersection, CATEGORY_DISPLAY_NAMES, NoteCategory } from './noteCategories';

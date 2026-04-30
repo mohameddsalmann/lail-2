@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useI18n } from '@/lib/i18n/context';
 import LangToggle from '@/components/icons/LangToggle';
 
@@ -15,9 +16,15 @@ export default function QuizTopBar() {
             <div className="mx-auto flex max-w-lg items-center justify-between gap-3 px-4 py-3 sm:max-w-xl">
                 <Link
                     href="/"
-                    className="shrink-0 text-xl font-semibold tracking-[0.2em] text-[#1a1a1a] font-serif sm:text-2xl"
+                    className="relative shrink-0 h-10 w-24 sm:h-12 sm:w-32 transition-opacity hover:opacity-90"
                 >
-                    LAIL
+                    <Image
+                        src="/logo.svg"
+                        alt="LAIL"
+                        fill
+                        className="object-contain"
+                        priority
+                    />
                 </Link>
                 <Link
                     href="/quiz"

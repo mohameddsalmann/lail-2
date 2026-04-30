@@ -119,7 +119,6 @@ export function fuzzyMatch(noteA: string, noteB: string): boolean {
 
   // 3. Levenshtein distance
   const shorter = a.length < b.length ? a : b;
-  const longer = a.length < b.length ? b : a;
   const maxDist = shorter.length <= RECOMMENDATION_CONFIG.SHORT_WORD_THRESHOLD
     ? RECOMMENDATION_CONFIG.LEVENSHTEIN_MAX_SHORT
     : RECOMMENDATION_CONFIG.LEVENSHTEIN_MAX_LONG;
@@ -130,10 +129,13 @@ export function fuzzyMatch(noteA: string, noteB: string): boolean {
   // 4. Multi-word: check if any individual word fuzzy-matches
   //    Handles cases like "oud wood" vs "oud" where the full string
   //    Levenshtein is too high but individual words match
-  const wordsA = a.split(/\s+/);
-  const wordsB = b.split(/\s+/);
+  //    Generic filler words (notes, extract, etc.) are excluded to prevent
+  //    false positives like "teakwood" → "wood notes" matching "marine notes"
+  const GENERIC_WORDS = new Set(['notes', 'note', 'extract', 'accord', 'absolute', 'essence', 'oil']);
+  const wordsA = a.split(/\s+/).filter(w => !GENERIC_WORDS.has(w));
+  const wordsB = b.split(/\s+/).filter(w => !GENERIC_WORDS.has(w));
 
-  if (wordsA.length > 1 || wordsB.length > 1) {
+  if (wordsA.length > 0 && wordsB.length > 0 && (a.split(/\s+/).length > 1 || b.split(/\s+/).length > 1)) {
     for (const wa of wordsA) {
       for (const wb of wordsB) {
         if (wa === wb) return true;

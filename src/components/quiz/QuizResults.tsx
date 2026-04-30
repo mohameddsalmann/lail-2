@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -20,7 +20,7 @@ interface QuizResultsProps {
 
 type BrowseFilter = 'all' | 'female' | 'male' | 'unisex' | 'summer' | 'all-seasons';
 
-export default function QuizResults({ recommendations, browsableCollection, answers, onRetake, usedFallback, confidenceLevel, safetyNetTriggered }: QuizResultsProps) {
+export default function QuizResults({ recommendations, browsableCollection, onRetake, usedFallback, confidenceLevel, safetyNetTriggered }: QuizResultsProps) {
     const { t } = useI18n();
     const [browseFilter, setBrowseFilter] = useState<BrowseFilter>('all');
 
@@ -66,8 +66,17 @@ export default function QuizResults({ recommendations, browsableCollection, answ
             {/* Header */}
             <header className="bg-white border-b border-[#e0e0e0]">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-semibold tracking-wide text-[#1a1a1a]">
-                        LAIL
+                    <Link
+                        href="/"
+                        className="relative h-10 w-24 shrink-0 transition-opacity hover:opacity-90 sm:h-12 sm:w-32"
+                    >
+                        <Image
+                            src="/logo.svg"
+                            alt="LAIL"
+                            fill
+                            className="object-contain object-left"
+                            priority
+                        />
                     </Link>
                     <Link
                         href="/"

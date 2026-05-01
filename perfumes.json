@@ -9,7 +9,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/summer-hammer-bali.png",
-    "sourceUrl": "https://lailfragrances.com/products/summer-hammer-bali",
+    "sourceUrl": "https://lailfragrances.com/products/bali",
     "inStock": true,
     "mainNotes": [
       "Mango",
@@ -61,7 +61,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/erba-pura-xerjoff-trobica.png",
-    "sourceUrl": "https://lailfragrances.com/products/erba-pura-xerjoff-trobica",
+    "sourceUrl": "https://lailfragrances.com/products/tropica-1",
     "inStock": true,
     "mainNotes": [
       "Tropical fruits",
@@ -111,7 +111,7 @@
     "gender": "male",
     "description": "",
     "imageUrl": "/images/le-beau-paradis-garden-maldives.png",
-    "sourceUrl": "https://lailfragrances.com/products/le-beau-paradis-garden-maldives",
+    "sourceUrl": "https://lailfragrances.com/products/maldives-1",
     "inStock": true,
     "mainNotes": [
       "Coconut",
@@ -163,7 +163,7 @@
     "gender": "male",
     "description": "",
     "imageUrl": "/images/y-edp-blue-nights.png",
-    "sourceUrl": "https://lailfragrances.com/products/y-edp-blue-nights",
+    "sourceUrl": "https://lailfragrances.com/products/blue-night",
     "inStock": true,
     "mainNotes": [
       "Green apple",
@@ -212,7 +212,7 @@
     "gender": "female",
     "description": "",
     "imageUrl": "/images/burberry-gold-ranoula.png",
-    "sourceUrl": "https://lailfragrances.com/products/burberry-gold-ranoula",
+    "sourceUrl": "https://lailfragrances.com/products/ranoula-1",
     "inStock": true,
     "mainNotes": [
       "Vanilla",
@@ -262,7 +262,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/apple-brandy-tuxedo.png",
-    "sourceUrl": "https://lailfragrances.com/products/apple-brandy-tuxedo",
+    "sourceUrl": "https://lailfragrances.com/products/tuxedo-1",
     "inStock": true,
     "mainNotes": [
       "Green apple",
@@ -313,7 +313,7 @@
     "gender": "male",
     "description": "",
     "imageUrl": "/images/imagination-by-lv-spark.png",
-    "sourceUrl": "https://lailfragrances.com/products/imagination-by-lv-spark",
+    "sourceUrl": "https://lailfragrances.com/products/spark-1",
     "inStock": true,
     "mainNotes": [
       "Chinese tea",
@@ -365,7 +365,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/symphony-by-lv-symphony.png",
-    "sourceUrl": "https://lailfragrances.com/products/symphony-by-lv-symphony",
+    "sourceUrl": "https://lailfragrances.com/products/symphonium",
     "inStock": true,
     "mainNotes": [
       "Grapefruit",
@@ -413,7 +413,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/pacific-chill-by-lv-breeze.png",
-    "sourceUrl": "https://lailfragrances.com/products/pacific-chill-by-lv-breeze",
+    "sourceUrl": "https://lailfragrances.com/products/breeze-1",
     "inStock": true,
     "mainNotes": [
       "Apricot",
@@ -467,7 +467,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/nishane-hacivat-denaro.png",
-    "sourceUrl": "https://lailfragrances.com/products/nishane-hacivat-denaro",
+    "sourceUrl": "https://lailfragrances.com/products/denaro-1",
     "inStock": true,
     "mainNotes": [
       "Oakmoss",
@@ -508,56 +508,6 @@
     ]
   },
   {
-    "id": "11",
-    "name": "valero ( valero x )",
-    "slug": "valero-valero-x",
-    "inspiredBy": null,
-    "price": 1200,
-    "currency": "EGP",
-    "gender": "unisex",
-    "description": "",
-    "imageUrl": "/images/valero-valero-x.png",
-    "sourceUrl": "https://lailfragrances.com/products/valero-valero-x",
-    "inStock": true,
-    "mainNotes": [
-      "Geranium",
-      "Lavender",
-      "Bergamot",
-      "Citron"
-    ],
-    "seasons": [
-      "summer",
-      "spring"
-    ],
-    "longevity": "moderate",
-    "notes": {
-      "top": [
-        "Geranium",
-        "Lavender"
-      ],
-      "middle": [
-        "Bergamot"
-      ],
-      "base": [
-        "Citron"
-      ]
-    },
-    "sizes": [
-      {
-        "size": 100,
-        "price": 1999
-      },
-      {
-        "size": 50,
-        "price": 1200
-      },
-      {
-        "size": 30,
-        "price": 960
-      }
-    ]
-  },
-  {
     "id": "12",
     "name": "tygar bvlgari ( ليث )",
     "slug": "tygar-bvlgari",
@@ -567,7 +517,7 @@
     "gender": "male",
     "description": "",
     "imageUrl": "/images/tygar-bvlgari.png",
-    "sourceUrl": "https://lailfragrances.com/products/tygar-bvlgari",
+    "sourceUrl": "https://lailfragrances.com/products/%D9%84%D9%8A%D8%AB-1",
     "inStock": true,
     "mainNotes": [
       "Grapefruit",
@@ -617,7 +567,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/g-d-of-fire.png",
-    "sourceUrl": "https://lailfragrances.com/products/g-d-of-fire",
+    "sourceUrl": "https://lailfragrances.com/products/%D8%B9%D9%88%D9%8A%D8%B3-1",
     "inStock": true,
     "mainNotes": [
       "Mango",
@@ -671,7 +621,7 @@
     "gender": "male",
     "description": "",
     "imageUrl": "/images/dylan-blue-raven.png",
-    "sourceUrl": "https://lailfragrances.com/products/dylan-blue-raven",
+    "sourceUrl": "https://lailfragrances.com/products/raven-1",
     "inStock": true,
     "mainNotes": [
       "Ambroxan",
@@ -725,7 +675,7 @@
     "gender": "unisex",
     "description": "",
     "imageUrl": "/images/steller-times-majestic.png",
-    "sourceUrl": "https://lailfragrances.com/products/steller-times-majestic",
+    "sourceUrl": "https://lailfragrances.com/products/majestic",
     "inStock": true,
     "mainNotes": [
       "Orange blossom",
@@ -764,56 +714,6 @@
     ]
   },
   {
-    "id": "16",
-    "name": "torino 21 ( Mintos )",
-    "slug": "torino-21-mintos",
-    "inspiredBy": null,
-    "price": 800,
-    "currency": "EGP",
-    "gender": "unisex",
-    "description": "",
-    "imageUrl": "/images/torino-21-mintos.png",
-    "sourceUrl": "https://lailfragrances.com/products/torino-21-mintos",
-    "inStock": true,
-    "mainNotes": [
-      "Mint",
-      "Lemon",
-      "Musk",
-      "Black currant"
-    ],
-    "seasons": [
-      "summer",
-      "spring"
-    ],
-    "longevity": "moderate",
-    "notes": {
-      "top": [
-        "Mint",
-        "Lemon"
-      ],
-      "middle": [
-        "Musk"
-      ],
-      "base": [
-        "Black currant"
-      ]
-    },
-    "sizes": [
-      {
-        "size": 100,
-        "price": 1360
-      },
-      {
-        "size": 50,
-        "price": 800
-      },
-      {
-        "size": 30,
-        "price": 640
-      }
-    ]
-  },
-  {
     "id": "17",
     "name": "le bau la parfume (woody coconut )",
     "slug": "le-bau-la-parfume-woody-coconut",
@@ -823,7 +723,7 @@
     "gender": "male",
     "description": "",
     "imageUrl": "/images/le-bau-la-parfume-woody-coconut.png",
-    "sourceUrl": "https://lailfragrances.com/products/le-bau-la-parfume-woody-coconut",
+    "sourceUrl": "https://lailfragrances.com/products/woody-coconut",
     "inStock": true,
     "mainNotes": [
       "Coconut",
@@ -875,7 +775,7 @@
     "gender": "female",
     "description": "",
     "imageUrl": "/images/yum-boujee-marshmallow-81-kayali-cr-me-de-nuit.png",
-    "sourceUrl": "https://lailfragrances.com/products/yum-boujee-marshmallow-81-kayali-cr-me-de-nuit",
+    "sourceUrl": "https://lailfragrances.com/products/creme-de-nuit-1",
     "inStock": true,
     "mainNotes": [
       "Marshmallow",
@@ -926,7 +826,7 @@
     "gender": "female",
     "description": "",
     "imageUrl": "/images/delina-exclusif-florenza.png",
-    "sourceUrl": "https://lailfragrances.com/products/delina-exclusif-florenza",
+    "sourceUrl": "https://lailfragrances.com/products/florenza-1",
     "inStock": true,
     "mainNotes": [
       "Turkish rose",
@@ -977,7 +877,7 @@
     "gender": "female",
     "description": "",
     "imageUrl": "/images/bianco-latte-sweet-honey.png",
-    "sourceUrl": "https://lailfragrances.com/products/bianco-latte-sweet-honey",
+    "sourceUrl": "https://lailfragrances.com/products/sweet-honey-1",
     "inStock": true,
     "mainNotes": [
       "Vanilla",

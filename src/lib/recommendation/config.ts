@@ -40,7 +40,7 @@ export const RECOMMENDATION_CONFIG = {
   MIN_GUARANTEED_RESULTS: 3,  // Always return at least this many recommendations
 
   /** Product slugs omitted from quiz recommendations (still in catalog JSON). */
-  EXCLUDED_PERFUME_SLUGS: ['torino-21-mintos', 'valero-valero-x'],
+  EXCLUDED_PERFUME_SLUGS: [] as string[],
 
   // --- Confidence Tiers ---
   CONFIDENCE_HIGH_THRESHOLD: 45,    // Score ≥ 45 → "high" confidence

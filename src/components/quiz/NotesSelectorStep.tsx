@@ -72,12 +72,6 @@ export default function NotesSelectorStep({
     const atLimit = selectedIds.length >= maxSelections;
 
     useEffect(() => {
-        if (!showAllCatalog) {
-            setExpandedCategories(new Set());
-        }
-    }, [showAllCatalog]);
-
-    useEffect(() => {
         if (!showAllCatalog) return;
         const frameId = window.requestAnimationFrame(() => {
             catalogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -304,8 +298,11 @@ export default function NotesSelectorStep({
             <motion.button
                 type="button"
                 onClick={() => {
+                    if (showAllCatalog) {
+                        setSearch('');
+                        setExpandedCategories(new Set());
+                    }
                     setShowAllCatalog((v) => !v);
-                    if (showAllCatalog) setSearch('');
                 }}
                 whileTap={{ scale: 0.99 }}
                 animate={{

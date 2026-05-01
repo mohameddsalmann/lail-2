@@ -1,7 +1,7 @@
 {
   "metadata": {
     "description": "Fragrance note votes for the AI recommendation system. Each fragrance has its top-voted notes with vote counts, used to calculate similarity and generate personalized recommendations.",
-    "totalFragrances": 19,
+    "totalFragrances": 17,
     "categories": [
       "Gourmand & Floral",
       "Fresh & Citrus",
@@ -89,22 +89,6 @@
       "totalVotes": 1560
     },
     {
-      "id": "16",
-      "name": "torino 21 (Mintos)",
-      "slug": "torino-21-mintos",
-      "inspiredBy": "Menthe Fraîche",
-      "image": "mintos.jpeg",
-      "category": "Fresh & Citrus",
-      "noteVotes": [
-        { "note": "Mint", "votes": 1452, "rank": 1 },
-        { "note": "Lemon", "votes": 1180, "rank": 2 },
-        { "note": "Basil", "votes": 709, "rank": 3 },
-        { "note": "Musk", "votes": 496, "rank": 4 },
-        { "note": "Black Currant", "votes": 459, "rank": 5 }
-      ],
-      "totalVotes": 4296
-    },
-    {
       "id": "8",
       "name": "symphony by lv (Symphony)",
       "slug": "symphony-by-lv-symphony",
@@ -149,21 +133,6 @@
         { "note": "Tunisian Neroli", "votes": 950, "rank": 5 }
       ],
       "totalVotes": 6713
-    },
-    {
-      "id": "11",
-      "name": "valero (valero x)",
-      "slug": "valero-valero-x",
-      "inspiredBy": "Valero X",
-      "image": "valero x.jpeg",
-      "category": "Fresh & Citrus",
-      "noteVotes": [
-        { "note": "Ambrox Super", "votes": 54, "rank": 1 },
-        { "note": "Geranium", "votes": 46, "rank": 2 },
-        { "note": "Lavender", "votes": 43, "rank": 3 },
-        { "note": "Bergamot", "votes": 33, "rank": 4 }
-      ],
-      "totalVotes": 176
     },
     {
       "id": "12",

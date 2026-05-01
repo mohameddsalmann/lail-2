@@ -145,7 +145,6 @@ function QuizLoadingScreen() {
 }
 
 export default function QuizContainer() {
-    const { t } = useI18n();
     const {
         currentStep,
         totalSteps,
